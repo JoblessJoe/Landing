@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>JoblessJoe | Professional Etsy Shop Management Software</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Professional Etsy management software for serious sellers. Automate your workflow, analyze profits, manage inventory, and scale your business." />
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --secondary: #0891b2;
+      --accent: #06b6d4;
+      --dark-bg: #0f172a;
+      --darker-bg: #020617;
+      --card-bg: #1e293b;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --border: #334155;
+      --success: #10b981;
+      --warning: #f59e0b;
+    }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+    
+    .bg-gradient {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 50%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 50%, rgba(8, 145, 178, 0.1) 0%, transparent 50%);
+      animation: drift 20s ease-in-out infinite;
+    }
+    
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-50px, 50px); }
+    }
+    
+    /* Container */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
+    /* Header */
+    header {
+      padding: 2rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .logo-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logo-header img {
+      width: 80px;
+      height: 80px;
+    }
+    
+    .logo-header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    .header-cta {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 4rem 0 6rem;
+    }
+    
+    .hero-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+    }
+    
+    .hero h2 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, var(--text-primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero p {
+      font-size: clamp(1.125rem, 2vw, 1.5rem);
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin: 0 auto 3rem;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(37, 99, 235, 0.6);
+    }
+    
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--dark-bg);
+      border-color: var(--accent);
+    }
+    
+    /* Features Grid */
+    .features {
+      padding: 4rem 0;
+    }
+    
+    .section-title {
+      text-align: center;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1.25rem;
+      margin-bottom: 3rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 40px rgba(6, 182, 212, 0.2);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--accent);
+    }
+    
+    .feature-card p {
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+    
+    .feature-list {
+      list-style: none;
+      margin-top: 1rem;
+    }
+    
+    .feature-list li {
+      padding: 0.5rem 0;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: start;
+      gap: 0.5rem;
+    }
+    
+    .feature-list li:before {
+      content: "✓";
+      color: var(--success);
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    
+    /* Stats Section */
+    .stats {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      padding: 4rem 2rem;
+      border-radius: 24px;
+      margin: 4rem 0;
+      text-align: center;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .stat-item h4 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-item p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    /* About Section */
+    .about-section {
+      padding: 4rem 0;
+      margin: 4rem 0;
+    }
+    
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 3rem;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 3rem;
+    }
+    
+    .about-photo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .about-photo-placeholder {
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      border: 4px solid var(--accent);
+      box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+    }
+    
+    .about-photo img {
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--accent);
+      box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+    }
+    
+    .about-text h3 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+    
+    .about-text h4 {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+    }
+    
+    .about-text p {
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    
+    .about-badges {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--dark-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    @media (max-width: 968px) {
+      .about-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 2rem;
+      }
+      
+      .about-badges {
+        justify-content: center;
+      }
+    }
+    
+    /* Tech Stack */
+    .tech-stack {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 4rem 0;
+    }
+    
+    .tech-stack h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1.5rem;
+      text-align: center;
+    }
+    
+    .tech-item {
+      padding: 1rem;
+      background: var(--dark-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    
+    .tech-item:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+    
+    .tech-item strong {
+      display: block;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+    
+    .tech-item small {
+      color: var(--text-secondary);
+    }
+    
+    /* Contact Section */
+    .contact-section {
+      padding: 4rem 0;
+      margin: 4rem 0;
+    }
+    
+    .contact-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 3rem;
+    }
+    
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .form-group label {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      padding: 0.875rem;
+      background: var(--dark-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 150px;
+    }
+    
+    .form-submit {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+    }
+    
+    .form-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(37, 99, 235, 0.6);
+    }
+    
+    .form-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .form-message {
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+    
+    .form-message.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--success);
+      color: var(--success);
+      display: block;
+    }
+    
+    .form-message.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      display: block;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+      text-align: center;
+      padding: 6rem 0;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(8, 145, 178, 0.1));
+      border-radius: 24px;
+      margin: 4rem 0;
+    }
+    
+    .cta-section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .cta-section p {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+    
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 0;
+      margin-top: 4rem;
+    }
+    
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-bottom: 2rem;
+    }
+    
+    .footer-section h4 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+    
+    .footer-section p,
+    .footer-section a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    
+    .footer-section a:hover {
+      color: var(--accent);
+    }
+    
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+    
+    .company-info {
+      margin-top: 1rem;
+      line-height: 1.8;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-cta {
+        display: none;
+      }
+      
+      .hero {
+        padding: 2rem 0 4rem;
+      }
+      
+      .hero-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+      
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats {
+        padding: 2rem 1rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation">
+    <div class="bg-gradient"></div>
+  </div>
+  
+  <div class="container">
+    <header>
+      <div class="logo-header">
+        <img src="/logo.svg" alt="JoblessJoe Logo">
+        <h1>JoblessJoe</h1>
+      </div>
+      <div class="header-cta">
+        <a href="https://itsjoblessjoe.etsy.com" target="_blank" class="btn btn-secondary">Etsy Shop</a>
+      </div>
+    </header>
+    
+    <main>
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-badge">🚀 Professional Etsy Management Software</div>
+        <h2>Scale Your Etsy Business with Confidence</h2>
+        <p>Automated inventory tracking, profit analysis, and order management built by an Etsy seller who needed a real solution.</p>
+        <div class="hero-buttons">
+          <a href="https://itsjoblessjoe.etsy.com" target="_blank" class="btn btn-primary">Visit Our Shop →</a>
+          <a href="#features" class="btn btn-secondary">Learn More</a>
+        </div>
+      </section>
+      
+      <!-- Stats Section -->
+      <section class="stats">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <h4>100%</h4>
+            <p>Real-time Sync</p>
+          </div>
+          <div class="stat-item">
+            <h4>24/7</h4>
+            <p>Automated Monitoring</p>
+          </div>
+          <div class="stat-item">
+            <h4>∞</h4>
+            <p>Scalable Products</p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- About the Founder -->
+      <section id="about" class="about-section">
+        <h2 class="section-title">Meet the Founder</h2>
+        <p class="section-subtitle">Built by someone who actually uses it every day</p>
+        
+        <div class="about-content">
+          <div class="about-photo">
+            <img src="/photo.jpg" alt="Johannes - Founder of JoblessJoe">
+          </div>
+          
+          <div class="about-text">
+            <h3>Hi, I'm Johannes!</h3>
+            <h4>Computer Science Student & Etsy Seller from Freiburg, Germany</h4>
+            <p>
+              I started my Etsy shop just 5 months ago, and like many sellers, I quickly ran into a frustrating problem: 
+              <strong>there was no good way to track my inventory</strong>. Spreadsheets were a mess, manual tracking was 
+              error-prone, and existing solutions were either too expensive or didn't fit my needs.
+            </p>
+            <p>
+              So I did what any developer would do - <strong>I built my own solution</strong>. What started as a simple 
+              inventory tracker has evolved into a comprehensive management system with automated order syncing, profit 
+              analysis, production planning, and so much more.
+            </p>
+            <p>
+              I'm currently studying computer science at the University of Freiburg, and I'm constantly improving this 
+              software based on real-world use in my own shop. Every feature you see here solves a real problem I've 
+              encountered as an Etsy seller.
+            </p>
+            
+            <div class="about-badges">
+              <span class="badge">🎓 CS Student @ Uni Freiburg</span>
+              <span class="badge">🛍️ Etsy Seller (5 months)</span>
+              <span class="badge">💻 Full-Stack Developer</span>
+              <span class="badge">📍 Freiburg, Germany</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Features Section -->
+      <section id="features" class="features">
+        <h2 class="section-title">Built for Professional Sellers</h2>
+        <p class="section-subtitle">Everything you need to manage and grow your Etsy business efficiently</p>
+        
+        <div class="feature-grid">
+          <div class="feature-card">
+            <span class="feature-icon">📊</span>
+            <h3>Real-Time Dashboard</h3>
+            <p>Get instant insights into your business with a comprehensive dashboard that shows what matters.</p>
+            <ul class="feature-list">
+              <li>Live inventory tracking across all products</li>
+              <li>Stock alerts and low inventory warnings</li>
+              <li>Order statistics and trends</li>
+              <li>Revenue tracking at a glance</li>
+            </ul>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon">🔄</span>
+            <h3>Automated Sync</h3>
+            <p>Stay synchronized with your Etsy shop automatically, no manual work required.</p>
+            <ul class="feature-list">
+              <li>Automatic order synchronization every 10 minutes</li>
+              <li>Background processing without interruption</li>
+              <li>Intelligent retry logic for failed syncs</li>
+              <li>Detailed sync logs and error tracking</li>
+            </ul>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon">💰</span>
+            <h3>Profit Analysis</h3>
+            <p>Know exactly how much you're making with detailed profit calculations.</p>
+            <ul class="feature-list">
+              <li>Material cost tracking per product</li>
+              <li>Automatic Etsy fee calculations</li>
+              <li>Shipping cost analysis (domestic & international)</li>
+              <li>Profit margins and trends over time</li>
+            </ul>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon">📦</span>
+            <h3>Smart Inventory</h3>
+            <p>Never run out of stock or over-produce with intelligent inventory management.</p>
+            <ul class="feature-list">
+              <li>Multi-dimensional inventory (colors, sizes, variations)</li>
+              <li>Automatic stock deduction on orders</li>
+              <li>Low-stock alerts and notifications</li>
+              <li>Production planning recommendations</li>
+            </ul>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon">📋</span>
+            <h3>Production Planner</h3>
+            <p>Optimize your production workflow and plan ahead efficiently.</p>
+            <ul class="feature-list">
+              <li>Smart production suggestions based on sales</li>
+              <li>Material requirement calculations</li>
+              <li>Batch production planning</li>
+              <li>Reorder point recommendations</li>
+            </ul>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon">📄</span>
+            <h3>Packing Lists & Export</h3>
+            <p>Streamline your fulfillment process with automated packing lists.</p>
+            <ul class="feature-list">
+              <li>Generate packing lists for orders</li>
+              <li>Export to PDF for printing</li>
+              <li>Excel export for analysis</li>
+              <li>Customizable templates</li>
+            </ul>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon">🎨</span>
+            <h3>Dynamic Product Management</h3>
+            <p>Manage any Etsy listing without touching code.</p>
+            <ul class="feature-list">
+              <li>Add new products through web interface</li>
+              <li>Configure variations and pricing</li>
+              <li>Color normalization and mapping</li>
+              <li>Consumables and material tracking</li>
+            </ul>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon">📈</span>
+            <h3>Sales Statistics</h3>
+            <p>Understand your business with detailed analytics and reports.</p>
+            <ul class="feature-list">
+              <li>Sales trends and forecasting</li>
+              <li>Best-selling products analysis</li>
+              <li>Revenue breakdown by product/category</li>
+              <li>Time-based performance metrics</li>
+            </ul>
+          </div>
+          
+          <div class="feature-card">
+            <span class="feature-icon">🌙</span>
+            <h3>Professional UI</h3>
+            <p>Work comfortably with a modern, responsive interface.</p>
+            <ul class="feature-list">
+              <li>Dark mode support (easier on the eyes)</li>
+              <li>Responsive design for mobile and tablet</li>
+              <li>Collapsible sidebar for more workspace</li>
+              <li>Intuitive navigation and workflows</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Tech Stack -->
+      <section class="tech-stack">
+        <h3>Built with Modern, Reliable Technology</h3>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <strong>Node.js</strong>
+            <small>Backend Runtime</small>
+          </div>
+          <div class="tech-item">
+            <strong>Express</strong>
+            <small>Web Framework</small>
+          </div>
+          <div class="tech-item">
+            <strong>SQLite</strong>
+            <small>Database</small>
+          </div>
+          <div class="tech-item">
+            <strong>Handlebars</strong>
+            <small>Templating</small>
+          </div>
+          <div class="tech-item">
+            <strong>PM2</strong>
+            <small>Process Manager</small>
+          </div>
+          <div class="tech-item">
+            <strong>Etsy API</strong>
+            <small>Official Integration</small>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Contact Section -->
+      <section id="contact" class="contact-section">
+        <h2 class="section-title">Get In Touch</h2>
+        <p class="section-subtitle">Have questions about the software or want to collaborate? I'd love to hear from you!</p>
+        
+        <div class="contact-container">
+          <form class="contact-form" id="contactForm">
+            <div class="form-message" id="formMessage"></div>
+            
+            <div class="form-group">
+              <label for="name">Your Name *</label>
+              <input type="text" id="name" name="name" required placeholder="John Doe">
+            </div>
+            
+            <div class="form-group">
+              <label for="email">Your Email *</label>
+              <input type="email" id="email" name="email" required placeholder="you@example.com">
+            </div>
+            
+            <div class="form-group">
+              <label for="subject">Subject *</label>
+              <input type="text" id="subject" name="subject" required placeholder="Question about your software">
+            </div>
+            
+            <div class="form-group">
+              <label for="message">Message *</label>
+              <textarea id="message" name="message" required placeholder="Tell me what's on your mind..."></textarea>
+            </div>
+            
+            <button type="submit" class="form-submit" id="submitBtn">Send Message</button>
+          </form>
+        </div>
+      </section>
+      
+      <!-- CTA Section -->
+      <section class="cta-section">
+        <h2>Ready to Transform Your Etsy Business?</h2>
+        <p>Visit my Etsy shop to see the quality products I create and sell</p>
+        <a href="https://itsjoblessjoe.etsy.com" target="_blank" class="btn btn-primary">Visit JoblessJoe on Etsy →</a>
+      </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>JoblessJoe</h4>
+          <p>Professional Etsy management software built with real-world experience. Every feature solves a genuine problem I've faced as an Etsy seller.</p>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Links</h4>
+          <a href="https://itsjoblessjoe.etsy.com" target="_blank">My Etsy Shop</a>
+          <a href="#features">Features</a>
+          <a href="#about">About Johannes</a>
+          <a href="#contact">Contact</a>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <div class="company-info">
+            <p><strong>JoblessJoe</strong></p>
+            <p>Auwaldstraße 7</p>
+            <p>79110 Freiburg</p>
+            <p>Germany</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026 JoblessJoe. All rights reserved.</p>
+        <p>Professional Etsy Management Software</p>
+      </div>
+    </footer>
+  </div>
+  
+  <script>
+    // Contact form handler
+    document.getElementById('contactForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      const formMessage = document.getElementById('formMessage');
+      const form = e.target;
+      
+      // Disable submit button
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      
+      // Get form data
+      const formData = {
+        name: form.name.value,
+        email: form.email.value,
+        subject: form.subject.value,
+        message: form.message.value
+      };
+      
+      try {
+        const response = await fetch('/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          formMessage.textContent = '✓ Message sent successfully! I\'ll get back to you soon.';
+          formMessage.className = 'form-message success';
+          form.reset();
+        } else {
+          throw new Error(result.error || 'Failed to send message');
+        }
+      } catch (error) {
+        formMessage.textContent = '✗ Failed to send message. Please try again or email me directly.';
+        formMessage.className = 'form-message error';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
+        
+        // Hide message after 5 seconds
+        setTimeout(() => {
+          formMessage.className = 'form-message';
+        }, 5000);
+      }
+    });
+  </script>
+</body>
+</html>
