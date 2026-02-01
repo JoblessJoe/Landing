@@ -1,9 +1,31 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const nodemailer = require("nodemailer");
 
 // Contact form submissions file
 const CONTACT_FILE = path.join(__dirname, "contact-submissions.json");
+
+// Email configuration
+// You'll need to configure this with your email settings
+const EMAIL_CONFIG = {
+  enabled: true, // Email notifications are now active!
+  service: 'gmail', // or 'outlook', 'yahoo', etc.
+  auth: {
+    user: 'johannes.tebbert@gmail.com', // Your email
+    pass: 'REDACTED_APP_PASSWORD' // Your email app password (NOT your regular password)
+  },
+  to: 'johannes.tebbert@icloud.com' // Where to send notifications
+};
+
+// Create email transporter
+let transporter = null;
+if (EMAIL_CONFIG.enabled) {
+  transporter = nodemailer.createTransport({
+    service: EMAIL_CONFIG.service,
+    auth: EMAIL_CONFIG.auth
+  });
+}
 
 const server = http.createServer((req, res) => {
   // Handle contact form submission
@@ -31,7 +53,8 @@ const server = http.createServer((req, res) => {
           name: data.name,
           email: data.email,
           subject: data.subject,
-          message: data.message
+          message: data.message,
+          emailSent: false // Will be updated after email is sent
         };
         
         // Read existing submissions or create new array
@@ -60,6 +83,68 @@ const server = http.createServer((req, res) => {
           console.log(`✓ Contact form submitted by ${data.name} (${data.email})`);
           console.log(`  Subject: ${data.subject}`);
           console.log(`  Saved to: ${CONTACT_FILE}`);
+          
+          // Send email notification if enabled
+          if (EMAIL_CONFIG.enabled && transporter) {
+            const mailOptions = {
+              from: EMAIL_CONFIG.auth.user,
+              to: EMAIL_CONFIG.to,
+              subject: `🔔 New Contact Form: ${data.subject}`,
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2 style="color: #2563eb;">New Contact Form Submission</h2>
+                  <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>From:</strong> ${data.name}</p>
+                    <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
+                    <p><strong>Subject:</strong> ${data.subject}</p>
+                    <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+                  </div>
+                  <div style="background: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                    <h3 style="margin-top: 0; color: #334155;">Message:</h3>
+                    <p style="white-space: pre-wrap; color: #475569;">${data.message}</p>
+                  </div>
+                  <div style="margin-top: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
+                    <p style="margin: 0; font-size: 14px; color: #64748b;">
+                      💡 Reply directly to <a href="mailto:${data.email}">${data.email}</a> to respond to this inquiry.
+                    </p>
+                  </div>
+                </div>
+              `,
+              text: `
+New Contact Form Submission
+
+From: ${data.name}
+Email: ${data.email}
+Subject: ${data.subject}
+Time: ${new Date().toLocaleString()}
+
+Message:
+${data.message}
+
+---
+Reply to: ${data.email}
+              `
+            };
+            
+            transporter.sendMail(mailOptions, (error, info) => {
+              if (error) {
+                console.error('✗ Error sending email notification:', error);
+                submission.emailSent = false;
+                submission.emailError = error.message;
+              } else {
+                console.log('✓ Email notification sent:', info.messageId);
+                submission.emailSent = true;
+                submission.emailSentAt = new Date().toISOString();
+                
+                // Update the file with the email sent status
+                fs.writeFile(CONTACT_FILE, JSON.stringify(submissions, null, 2), (err) => {
+                  if (err) {
+                    console.error('Warning: Could not update email sent status:', err);
+                  }
+                });
+              }
+            });
+          }
           
           res.writeHead(200, { "Content-Type": "application/json" });
           res.end(JSON.stringify({ success: true }));
