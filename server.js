@@ -209,6 +209,6 @@ Reply to: ${data.email}
   });
 });
 
-server.listen(3003, "127.0.0.1", () => {
-  console.log("Landingpage läuft auf http://127.0.0.1:3003");
+server.listen(3000, "127.0.0.1", () => {
+  console.log("Landingpage läuft auf http://127.0.0.1:3000");
 });
