@@ -99,7 +99,8 @@
     }
     
     .logo-header {
-      margin-top: -440px;
+      margin-top: -480px;
+      margin-bottom: -50px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -607,10 +608,15 @@
     
     /* Responsive */
     @media (max-width: 768px) {
+      body {
+        overflow-x: hidden;
+      }
+      
       .container {
-        padding: 0 0.5rem;
+        padding: 0 1rem;
         max-width: 100%;
         margin: 0 auto;
+        box-sizing: border-box;
       }
       
       .logo-header {
@@ -618,6 +624,8 @@
         justify-content: center;
         align-items: center;
         width: 100%;
+        margin-top: 0 !important;
+        margin-bottom: 1rem !important;
       }
       
       .logo-header img {
@@ -625,6 +633,7 @@
         width: 100%;
         height: auto;
         display: block;
+        filter: brightness(2.7) drop-shadow(0 7px 12px rgba(255, 255, 255, 0.223));
       }
       
       header {
@@ -670,9 +679,10 @@
       
       .feature-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.5rem;
-        margin-left: auto;
-        margin-right: auto;
+        gap: 0.625rem;
+        margin-left: 0;
+        margin-right: 0;
+        box-sizing: border-box;
       }
       
       .feature-card {
