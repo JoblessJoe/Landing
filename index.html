@@ -5,7 +5,26 @@
   <title>JoblessJoe | Professional Etsy Shop Management Software</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Professional Etsy management software for serious sellers. Automate your workflow, analyze profits, manage inventory, and scale your business." />
+  
+  <!-- Favicons -->
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/logo.png">
+  <link rel="shortcut icon" href="/logo.png">
+  
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://joblessjoe.com">
+  <meta property="og:title" content="JoblessJoe | Professional Etsy Shop Management Software">
+  <meta property="og:description" content="Automated inventory tracking, profit analysis, and order management built by an Etsy seller who needed a real solution.">
+  <meta property="og:image" content="/logo.png">
+  
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JoblessJoe | Professional Etsy Shop Management Software">
+  <meta name="twitter:description" content="Automated inventory tracking, profit analysis, and order management built by an Etsy seller who needed a real solution.">
+  <meta name="twitter:image" content="/logo.png">
   <style>
     * { 
       margin: 0; 
@@ -76,29 +95,21 @@
       padding: 2rem 0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
     }
     
     .logo-header {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      justify-content: center;
+      width: 100%;
     }
     
     .logo-header img {
-      width: 200px;
-      height: 200px;
-    }
-    
-    .logo-header h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-    
-    .header-cta {
-      display: flex;
-      gap: 1rem;
+      max-width: 600px;
+      height: auto;
+      width: 100%;
+      filter: brightness(2.7) drop-shadow(0 7px 12px rgba(255, 255, 255, 0.223));
     }
     
     /* Hero Section */
@@ -595,8 +606,8 @@
     
     /* Responsive */
     @media (max-width: 768px) {
-      .header-cta {
-        display: none;
+      .logo-header img {
+        max-width: 300px;
       }
       
       .hero {
@@ -635,11 +646,7 @@
   <div class="container">
     <header>
       <div class="logo-header">
-        <img src="/logo.svg" alt="JoblessJoe Logo">
-        <h1>JoblessJoe</h1>
-      </div>
-      <div class="header-cta">
-        <a href="https://itsjoblessjoe.etsy.com" target="_blank" class="btn btn-secondary">Etsy Shop</a>
+        <img src="/logo-rectangle.svg" alt="JoblessJoe Logo">
       </div>
     </header>
     
@@ -668,45 +675,6 @@
           <div class="stat-item">
             <h4>∞</h4>
             <p>Scalable Products</p>
-          </div>
-        </div>
-      </section>
-      
-      <!-- About the Founder -->
-      <section id="about" class="about-section">
-        <h2 class="section-title">Meet the Founder</h2>
-        <p class="section-subtitle">Built by someone who actually uses it every day</p>
-        
-        <div class="about-content">
-          <div class="about-photo">
-            <img src="/photo.jpg" alt="Johannes - Founder of JoblessJoe">
-          </div>
-          
-          <div class="about-text">
-            <h3>Hi, I'm Johannes!</h3>
-            <h4>Computer Science Student & Etsy Seller from Freiburg, Germany</h4>
-            <p>
-              I started my Etsy shop just 5 months ago, and like many sellers, I quickly ran into a frustrating problem: 
-              <strong>there was no good way to track my inventory</strong>. Spreadsheets were a mess, manual tracking was 
-              error-prone, and existing solutions were either too expensive or didn't fit my needs.
-            </p>
-            <p>
-              So I did what any developer would do - <strong>I built my own solution</strong>. What started as a simple 
-              inventory tracker has evolved into a comprehensive management system with automated order syncing, profit 
-              analysis, production planning, and so much more.
-            </p>
-            <p>
-              I'm currently studying computer science at the University of Freiburg, and I'm constantly improving this 
-              software based on real-world use in my own shop. Every feature you see here solves a real problem I've 
-              encountered as an Etsy seller.
-            </p>
-            
-            <div class="about-badges">
-              <span class="badge">🎓 CS Student @ Uni Freiburg</span>
-              <span class="badge">🛍️ Etsy Seller (5 months)</span>
-              <span class="badge">💻 Full-Stack Developer</span>
-              <span class="badge">📍 Freiburg, Germany</span>
-            </div>
           </div>
         </div>
       </section>
@@ -854,6 +822,45 @@
           <div class="tech-item">
             <strong>Etsy API</strong>
             <small>Official Integration</small>
+          </div>
+        </div>
+      </section>
+      
+      <!-- About the Founder -->
+      <section id="about" class="about-section">
+        <h2 class="section-title">Meet the Founder</h2>
+        <p class="section-subtitle">Built by someone who actually uses it every day</p>
+        
+        <div class="about-content">
+          <div class="about-photo">
+            <img src="/photo.jpg" alt="Johannes - Founder of JoblessJoe">
+          </div>
+          
+          <div class="about-text">
+            <h3>Hi, I'm Johannes!</h3>
+            <h4>Computer Science Student & Etsy Seller from Freiburg, Germany</h4>
+            <p>
+              I started my Etsy shop just 5 months ago, and like many sellers, I quickly ran into a frustrating problem: 
+              <strong>there was no good way to track my inventory</strong>. Spreadsheets were a mess, manual tracking was 
+              error-prone, and existing solutions were either too expensive or didn't fit my needs.
+            </p>
+            <p>
+              So I did what any developer would do - <strong>I built my own solution</strong>. What started as a simple 
+              inventory tracker has evolved into a comprehensive management system with automated order syncing, profit 
+              analysis, production planning, and so much more.
+            </p>
+            <p>
+              I'm currently studying computer science at the University of Freiburg, and I'm constantly improving this 
+              software based on real-world use in my own shop. Every feature you see here solves a real problem I've 
+              encountered as an Etsy seller.
+            </p>
+            
+            <div class="about-badges">
+              <span class="badge">🎓 CS Student @ Uni Freiburg</span>
+              <span class="badge">🛍️ Etsy Seller (5 months)</span>
+              <span class="badge">💻 Full-Stack Developer</span>
+              <span class="badge">📍 Freiburg, Germany</span>
+            </div>
           </div>
         </div>
       </section>
