@@ -2,21 +2,48 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const nodemailer = require("nodemailer");
+require('dotenv').config();
+
+// HTML sanitization for XSS protection
+const createDOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
 
 // Contact form submissions file
 const CONTACT_FILE = path.join(__dirname, "contact-submissions.json");
 
-// Email configuration
-// You'll need to configure this with your email settings
+// Email configuration - NOW USES ENVIRONMENT VARIABLES
 const EMAIL_CONFIG = {
-  enabled: true, // Email notifications are now active!
-  service: 'gmail', // or 'outlook', 'yahoo', etc.
+  enabled: process.env.EMAIL_ENABLED === 'true',
+  service: process.env.EMAIL_SERVICE || 'gmail',
   auth: {
-    user: 'johannes.tebbert@gmail.com', // Your email
-    pass: 'REDACTED_APP_PASSWORD' // Your email app password (NOT your regular password)
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD
   },
-  to: 'johannes.tebbert@icloud.com' // Where to send notifications
+  to: process.env.EMAIL_TO
 };
+
+// Validate email configuration
+if (EMAIL_CONFIG.enabled) {
+  if (!EMAIL_CONFIG.auth.user || !EMAIL_CONFIG.auth.pass || !EMAIL_CONFIG.to) {
+    console.error('❌ ERROR: Email credentials missing!');
+    console.error('Please set EMAIL_USER, EMAIL_PASSWORD, and EMAIL_TO in .env file');
+    process.exit(1);
+  }
+  console.log('✓ Email configuration loaded from environment variables');
+}
+
+// HTML escape function for XSS protection
+function escapeHtml(unsafe) {
+  if (typeof unsafe !== 'string') return '';
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 // Create email transporter
 let transporter = null;
@@ -27,9 +54,58 @@ if (EMAIL_CONFIG.enabled) {
   });
 }
 
+// Rate limiting - Track submissions by IP
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_MAX_REQUESTS = 3; // Max 3 submissions per window
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, [now]);
+    return true;
+  }
+  
+  const timestamps = rateLimitMap.get(ip).filter(time => now - time < RATE_LIMIT_WINDOW);
+  
+  if (timestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
+    return false; // Rate limit exceeded
+  }
+  
+  timestamps.push(now);
+  rateLimitMap.set(ip, timestamps);
+  return true;
+}
+
+// Clean up old rate limit entries every hour
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, timestamps] of rateLimitMap.entries()) {
+    const validTimestamps = timestamps.filter(time => now - time < RATE_LIMIT_WINDOW);
+    if (validTimestamps.length === 0) {
+      rateLimitMap.delete(ip);
+    } else {
+      rateLimitMap.set(ip, validTimestamps);
+    }
+  }
+}, 60 * 60 * 1000);
+
 const server = http.createServer((req, res) => {
   // Handle contact form submission
   if (req.url === '/contact' && req.method === 'POST') {
+    // Get client IP
+    const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
+    
+    // Check rate limit
+    if (!checkRateLimit(clientIp)) {
+      console.log(`⚠️  Rate limit exceeded for IP: ${clientIp}`);
+      res.writeHead(429, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ 
+        error: "Too many requests. Please try again in 15 minutes." 
+      }));
+      return;
+    }
     let body = '';
     
     req.on('data', chunk => {
@@ -86,26 +162,32 @@ const server = http.createServer((req, res) => {
           
           // Send email notification if enabled
           if (EMAIL_CONFIG.enabled && transporter) {
+            // Sanitize all user input to prevent XSS attacks
+            const safeName = escapeHtml(data.name);
+            const safeEmail = escapeHtml(data.email);
+            const safeSubject = escapeHtml(data.subject);
+            const safeMessage = escapeHtml(data.message);
+            
             const mailOptions = {
               from: EMAIL_CONFIG.auth.user,
               to: EMAIL_CONFIG.to,
-              subject: `🔔 New Contact Form: ${data.subject}`,
+              subject: `🔔 New Contact Form: ${safeSubject}`,
               html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                   <h2 style="color: #2563eb;">New Contact Form Submission</h2>
                   <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>From:</strong> ${data.name}</p>
-                    <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
-                    <p><strong>Subject:</strong> ${data.subject}</p>
+                    <p><strong>From:</strong> ${safeName}</p>
+                    <p><strong>Email:</strong> <a href="mailto:${safeEmail}">${safeEmail}</a></p>
+                    <p><strong>Subject:</strong> ${safeSubject}</p>
                     <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
                   </div>
                   <div style="background: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
                     <h3 style="margin-top: 0; color: #334155;">Message:</h3>
-                    <p style="white-space: pre-wrap; color: #475569;">${data.message}</p>
+                    <p style="white-space: pre-wrap; color: #475569;">${safeMessage}</p>
                   </div>
                   <div style="margin-top: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
                     <p style="margin: 0; font-size: 14px; color: #64748b;">
-                      💡 Reply directly to <a href="mailto:${data.email}">${data.email}</a> to respond to this inquiry.
+                      💡 Reply directly to <a href="mailto:${safeEmail}">${safeEmail}</a> to respond to this inquiry.
                     </p>
                   </div>
                 </div>
