@@ -171,40 +171,57 @@ const server = http.createServer((req, res) => {
             const mailOptions = {
               from: EMAIL_CONFIG.auth.user,
               to: EMAIL_CONFIG.to,
-              subject: `🔔 New Contact Form: ${safeSubject}`,
+              replyTo: safeEmail,
+              subject: `JoblessJoe Contact: ${safeSubject}`,
               html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                  <h2 style="color: #2563eb;">New Contact Form Submission</h2>
-                  <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>From:</strong> ${safeName}</p>
-                    <p><strong>Email:</strong> <a href="mailto:${safeEmail}">${safeEmail}</a></p>
-                    <p><strong>Subject:</strong> ${safeSubject}</p>
-                    <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
+
+                  <div style="border-bottom: 2px solid #e5e5e5; padding-bottom: 16px; margin-bottom: 24px;">
+                    <h1 style="font-size: 18px; font-weight: 600; margin: 0; color: #1a1a1a;">New message from ${safeName}</h1>
+                    <p style="font-size: 13px; color: #666; margin: 4px 0 0 0;">${new Date().toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' })}</p>
                   </div>
-                  <div style="background: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                    <h3 style="margin-top: 0; color: #334155;">Message:</h3>
-                    <p style="white-space: pre-wrap; color: #475569;">${safeMessage}</p>
+
+                  <div style="margin-bottom: 24px;">
+                    <p style="font-size: 15px; line-height: 1.6; color: #333; margin: 0; white-space: pre-wrap;">${safeMessage}</p>
                   </div>
-                  <div style="margin-top: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
-                    <p style="margin: 0; font-size: 14px; color: #64748b;">
-                      💡 Reply directly to <a href="mailto:${safeEmail}">${safeEmail}</a> to respond to this inquiry.
-                    </p>
+
+                  <div style="background: #f7f7f7; border-radius: 6px; padding: 16px; margin-bottom: 24px;">
+                    <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                      <tr>
+                        <td style="color: #666; padding: 4px 0; width: 70px;">From</td>
+                        <td style="color: #1a1a1a; padding: 4px 0;">${safeName}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #666; padding: 4px 0;">Email</td>
+                        <td style="color: #1a1a1a; padding: 4px 0;"><a href="mailto:${safeEmail}" style="color: #1a1a1a;">${safeEmail}</a></td>
+                      </tr>
+                      <tr>
+                        <td style="color: #666; padding: 4px 0;">Subject</td>
+                        <td style="color: #1a1a1a; padding: 4px 0;">${safeSubject}</td>
+                      </tr>
+                    </table>
                   </div>
+
+                  <div style="text-align: center; padding-top: 16px; border-top: 1px solid #e5e5e5;">
+                    <a href="mailto:${safeEmail}?subject=Re: ${safeSubject}" style="display: inline-block; background: #1a1a1a; color: #fff; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">Reply to ${safeName}</a>
+                  </div>
+
+                  <p style="font-size: 12px; color: #999; text-align: center; margin-top: 24px;">
+                    Sent via JoblessJoe contact form
+                  </p>
                 </div>
               `,
-              text: `
-New Contact Form Submission
+              text: `New message from ${data.name}
 
-From: ${data.name}
-Email: ${data.email}
-Subject: ${data.subject}
-Time: ${new Date().toLocaleString()}
-
-Message:
 ${data.message}
 
 ---
-Reply to: ${data.email}
+From: ${data.name}
+Email: ${data.email}
+Subject: ${data.subject}
+Time: ${new Date().toLocaleString('de-DE')}
+
+Reply to this email to respond directly.
               `
             };
             
